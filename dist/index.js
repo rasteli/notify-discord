@@ -32,22 +32,26 @@ var __awaiter = (this && this.__awaiter) || function (thisArg, _arguments, P, ge
     });
 };
 Object.defineProperty(exports, "__esModule", { value: true });
-require("dotenv/config");
 const core = __importStar(require("@actions/core"));
 const github = __importStar(require("@actions/github"));
 const discord_js_1 = require("discord.js");
+const getMessage_1 = require("./utils/getMessage");
 const DEV_ROLE_ID = "1044322898355167302";
 const NOTIFICATIONS_CHANNEL_ID = "1074433899192656005";
 function main() {
     return __awaiter(this, void 0, void 0, function* () {
         const token = core.getInput("token");
         const branch = core.getInput("branch");
-        const repo_tree = core.getInput("repo_tree");
+        const type = core.getInput("type");
         const client = new discord_js_1.Client({ intents: [discord_js_1.GatewayIntentBits.Guilds] });
         client.once(discord_js_1.Events.ClientReady, c => {
-            const channel = client.channels.cache.get(NOTIFICATIONS_CHANNEL_ID);
-            channel.send(`<@&${DEV_ROLE_ID}> Nova branch **${branch}** criada: ${repo_tree}/${branch}`);
             console.log(`Logged in as ${c.user.tag}!`);
+            const channel = client.channels.cache.get(NOTIFICATIONS_CHANNEL_ID);
+            const message = (0, getMessage_1.getMessage)(branch, type);
+            channel.send(`<@&${DEV_ROLE_ID}> ${message}`);
+            setTimeout(() => {
+                client.destroy();
+            }, 3000);
         });
         client.login(token);
         const payload = JSON.stringify(github.context.payload, undefined, 2);

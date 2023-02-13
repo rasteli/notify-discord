@@ -2,6 +2,7 @@ import * as core from "@actions/core"
 import * as github from "@actions/github"
 
 import { Client, Events, GatewayIntentBits, TextChannel } from "discord.js"
+import { getMessage } from "./utils/getMessage"
 
 const DEV_ROLE_ID = "1044322898355167302"
 const NOTIFICATIONS_CHANNEL_ID = "1074433899192656005"
@@ -9,7 +10,7 @@ const NOTIFICATIONS_CHANNEL_ID = "1074433899192656005"
 async function main() {
   const token = core.getInput("token")
   const branch = core.getInput("branch")
-  const repo_tree = core.getInput("repo_tree")
+  const type = core.getInput("type") as "create" | "merge"
 
   const client = new Client({ intents: [GatewayIntentBits.Guilds] })
 
@@ -20,9 +21,9 @@ async function main() {
       NOTIFICATIONS_CHANNEL_ID
     ) as TextChannel
 
-    channel.send(
-      `<@&${DEV_ROLE_ID}> Nova branch **${branch}** criada: ${repo_tree}/${branch}`
-    )
+    const message = getMessage(branch, type)
+
+    channel.send(`<@&${DEV_ROLE_ID}> ${message}`)
 
     setTimeout(() => {
       client.destroy()

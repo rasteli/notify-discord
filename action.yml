@@ -1,0 +1,10 @@
+name: "Notify Discord"
+description: "Emits an event to be listened to by a Discord bot"
+inputs:
+  branch:
+    description: "The branch that was pushed to"
+    required: true
+    default: "master"
+runs:
+  using: "node16"
+  main: "dist/index.js"

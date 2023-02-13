@@ -1,5 +1,5 @@
 name: "Notify Discord"
-description: "Emits an event to be listened to by a Discord bot"
+description: "Sends a notification to a Discord channel"
 inputs:
   branch:
     description: "The branch that was pushed to"

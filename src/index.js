@@ -31,24 +31,25 @@ var __awaiter = (this && this.__awaiter) || function (thisArg, _arguments, P, ge
         step((generator = generator.apply(thisArg, _arguments || [])).next());
     });
 };
-var __importDefault = (this && this.__importDefault) || function (mod) {
-    return (mod && mod.__esModule) ? mod : { "default": mod };
-};
 Object.defineProperty(exports, "__esModule", { value: true });
-const amqplib_1 = __importDefault(require("amqplib"));
+require("dotenv/config");
 const core = __importStar(require("@actions/core"));
 const github = __importStar(require("@actions/github"));
+const discord_js_1 = require("discord.js");
+const DEV_ROLE_ID = "1044322898355167302";
+const NOTIFICATIONS_CHANNEL_ID = "1074433899192656005";
 function main() {
     return __awaiter(this, void 0, void 0, function* () {
+        const token = core.getInput("token");
         const branch = core.getInput("branch");
-        const connection = yield amqplib_1.default.connect("amqp://url-shortener-production-9595.up.railway.app"); // Alterar para IP do servidor (laptop)
-        const channel = yield connection.createChannel();
-        const queue = "notify-discord";
-        yield channel.assertQueue(queue, { durable: true });
-        channel.sendToQueue(queue, Buffer.from(branch));
-        console.log(`[x] Sent ${branch} to ${queue}`);
-        yield channel.close();
-        yield connection.close();
+        const repo_tree = core.getInput("repo_tree");
+        const client = new discord_js_1.Client({ intents: [discord_js_1.GatewayIntentBits.Guilds] });
+        client.once(discord_js_1.Events.ClientReady, c => {
+            const channel = client.channels.cache.get(NOTIFICATIONS_CHANNEL_ID);
+            channel.send(`<@&${DEV_ROLE_ID}> Nova branch **${branch}** criada: ${repo_tree}/${branch}`);
+            console.log(`Logged in as ${c.user.tag}!`);
+        });
+        client.login(token);
         const payload = JSON.stringify(github.context.payload, undefined, 2);
         console.log(`The event payload: ${payload}`);
     });

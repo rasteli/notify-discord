@@ -1,27 +1,34 @@
-import amqp from "amqplib"
+import "dotenv/config"
+
 import * as core from "@actions/core"
 import * as github from "@actions/github"
 
+import { Client, Events, GatewayIntentBits, TextChannel } from "discord.js"
+
+const DEV_ROLE_ID = "1044322898355167302"
+const NOTIFICATIONS_CHANNEL_ID = "1074433899192656005"
+
 async function main() {
+  const token = core.getInput("token")
   const branch = core.getInput("branch")
+  const repo_tree = core.getInput("repo_tree")
 
-  const connection = await amqp.connect(
-    "amqp://url-shortener-production-9595.up.railway.app"
-  ) // Alterar para IP do servidor (laptop)
-  const channel = await connection.createChannel()
+  const client = new Client({ intents: [GatewayIntentBits.Guilds] })
 
-  const queue = "notify-discord"
+  client.once(Events.ClientReady, c => {
+    const channel = client.channels.cache.get(
+      NOTIFICATIONS_CHANNEL_ID
+    ) as TextChannel
 
-  await channel.assertQueue(queue, { durable: true })
-  channel.sendToQueue(queue, Buffer.from(branch))
+    channel.send(
+      `<@&${DEV_ROLE_ID}> Nova branch **${branch}** criada: ${repo_tree}/${branch}`
+    )
+    console.log(`Logged in as ${c.user.tag}!`)
+  })
 
-  console.log(`[x] Sent ${branch} to ${queue}`)
-
-  await channel.close()
-  await connection.close()
+  client.login(token)
 
   const payload = JSON.stringify(github.context.payload, undefined, 2)
-
   console.log(`The event payload: ${payload}`)
 }
 

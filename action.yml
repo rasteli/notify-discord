@@ -5,6 +5,12 @@ inputs:
     description: "The branch that was pushed to"
     required: true
     default: "master"
+  token:
+    description: "The Discord bot token"
+    required: true
+  repo_tree:
+    description: "The repository tree"
+    required: true
 runs:
   using: "node16"
   main: "src/index.js"

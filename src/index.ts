@@ -16,6 +16,8 @@ async function main() {
   const client = new Client({ intents: [GatewayIntentBits.Guilds] })
 
   client.once(Events.ClientReady, c => {
+    console.log(`Logged in as ${c.user.tag}!`)
+
     const channel = client.channels.cache.get(
       NOTIFICATIONS_CHANNEL_ID
     ) as TextChannel
@@ -23,15 +25,16 @@ async function main() {
     channel.send(
       `<@&${DEV_ROLE_ID}> Nova branch **${branch}** criada: ${repo_tree}/${branch}`
     )
-    console.log(`Logged in as ${c.user.tag}!`)
+
+    setTimeout(() => {
+      client.destroy()
+    }, 3000)
   })
 
   client.login(token)
 
   const payload = JSON.stringify(github.context.payload, undefined, 2)
   console.log(`The event payload: ${payload}`)
-
-  client.destroy()
 }
 
 main().catch(error => {

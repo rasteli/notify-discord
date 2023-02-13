@@ -11,6 +11,13 @@ inputs:
   repo_tree:
     description: "The repository tree"
     required: true
+  source_branch:
+    description: "Source branch from a pull request"
+    required: false
+  type:
+    description: "The type of event"
+    required: true
+    default: "create"
 runs:
   using: "node16"
   main: "src/index.js"

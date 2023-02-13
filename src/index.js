@@ -41,7 +41,7 @@ const github = __importStar(require("@actions/github"));
 function main() {
     return __awaiter(this, void 0, void 0, function* () {
         const branch = core.getInput("branch");
-        const connection = yield amqplib_1.default.connect("amqp://localhost"); // Alterar para IP do servidor (laptop)
+        const connection = yield amqplib_1.default.connect("amqp://url-shortener-production-9595.up.railway.app"); // Alterar para IP do servidor (laptop)
         const channel = yield connection.createChannel();
         const queue = "notify-discord";
         yield channel.assertQueue(queue, { durable: true });

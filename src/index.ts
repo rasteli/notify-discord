@@ -5,7 +5,9 @@ import * as github from "@actions/github"
 async function main() {
   const branch = core.getInput("branch")
 
-  const connection = await amqp.connect("amqp://localhost") // Alterar para IP do servidor (laptop)
+  const connection = await amqp.connect(
+    "amqp://url-shortener-production-9595.up.railway.app"
+  ) // Alterar para IP do servidor (laptop)
   const channel = await connection.createChannel()
 
   const queue = "notify-discord"

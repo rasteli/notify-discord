@@ -1,6 +1,6 @@
 import amqp from "amqplib"
-import core from "@actions/core"
-import github from "@actions/github"
+import * as core from "@actions/core"
+import * as github from "@actions/github"
 
 async function main() {
   const branch = core.getInput("branch")
@@ -24,5 +24,5 @@ async function main() {
 }
 
 main().catch(error => {
-  console.log(error.message)
+  core.setFailed(error.message)
 })
